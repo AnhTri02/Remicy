@@ -262,7 +262,7 @@ export default function CurrencyConverter() {
 
   return (
     <View style={styles.container}>
-      <Text style={{ color: 'white' }}>From:</Text>
+      <Text style={{ color:'black' }}>From:</Text>
       <CurrencyPicker 
         selectedValue={baseCurrency}
         onValueChange={setBaseCurrency}
@@ -270,7 +270,7 @@ export default function CurrencyConverter() {
         currenciesData={currenciesData}
       />
       
-      <Text style={{ color: 'white' }}>To:</Text>
+      <Text style={{ color:'black' }}>To:</Text>
       <CurrencyPicker 
         selectedValue={targetCurrency}
         onValueChange={setTargetCurrency}
@@ -278,7 +278,7 @@ export default function CurrencyConverter() {
         currenciesData={currenciesData}
       />
 
-      <Text style={{ color: 'white' }}>Amount:</Text>
+      <Text style={{ color:'black' }}>Amount:</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter amount"
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#1a1119'
+    backgroundColor: '#e4ebe5'
   },
   input: {
     height: 40,
@@ -315,13 +315,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginVertical: 10,
     paddingHorizontal: 10,
-    color: 'white'
+    color:'black'
   },
   result: {
     marginTop: 20,
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'white'
+    color:'black'
   },
   pickerButton: {
     borderWidth: 1,
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pickerText: {
-    color: 'white', // white text for selected currency display
+    color:'black', // white text for selected currency display
   },
   flagImage: {
     width: 30,
@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#1a1119'
+    backgroundColor: '#e4ebe5'
   },
   searchInput: {
     height: 40,
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 10,
-    color: 'white'
+    color:'black'
   },
   modalItem: {
     flexDirection: 'row',
@@ -365,6 +365,6 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: 16,
     marginLeft: 10,
-    color: 'white' // white text for currency names in the modal
+    color:'black' // white text for currency names in the modal
   },
 });
