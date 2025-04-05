@@ -1,8 +1,559 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  Button, 
+  StyleSheet, 
+  ActivityIndicator, 
+  Modal, 
+  FlatList, 
+  TouchableOpacity, 
+  Image 
+} from 'react-native';
 
 const API_KEY = '9e13da419adab6539177249e';
+
+// Mapping currency codes to their full names and flag images.
+// Ensure the images exist at the specified path.
+// In CurrencyConverter.js (or a separate file if you prefer)
+export const currenciesData = {
+  AED: {
+    name: 'United Arab Emirates Dirham',
+    flag: require('../assets/ae.png'), // Make sure you have "ae.png"
+  },
+  AFN: {
+    name: 'Afghan Afghani',
+    flag: require('../assets/af.png'),
+  },
+  ALL: {
+    name: 'Albanian Lek',
+    flag: require('../assets/al.png'),
+  },
+  AMD: {
+    name: 'Armenian Dram',
+    flag: require('../assets/am.png'),
+  },
+  ANG: {
+    name: 'Netherlands Antillean Guilder',
+    flag: require('../assets/nl.png'),
+  },
+  AOA: {
+    name: 'Angolan Kwanza',
+    flag: require('../assets/ao.png'),
+  },
+  ARS: {
+    name: 'Argentine Peso',
+    flag: require('../assets/ar.png'),
+  },
+  AUD: {
+    name: 'Australian Dollar',
+    flag: require('../assets/au.png'),
+  },
+  AWG: {
+    name: 'Aruban Florin',
+    flag: require('../assets/aw.png'),
+  },
+  AZN: {
+    name: 'Azerbaijani Manat',
+    flag: require('../assets/az.png'),
+  },
+  BAM: {
+    name: 'Bosnia and Herzegovina Convertible Mark',
+    flag: require('../assets/ba.png'),
+  },
+  BBD: {
+    name: 'Barbadian Dollar',
+    flag: require('../assets/bb.png'),
+  },
+  BDT: {
+    name: 'Bangladeshi Taka',
+    flag: require('../assets/bd.png'),
+  },
+  BGN: {
+    name: 'Bulgarian Lev',
+    flag: require('../assets/bg.png'),
+  },
+  BHD: {
+    name: 'Bahraini Dinar',
+    flag: require('../assets/bh.png'),
+  },
+  BIF: {
+    name: 'Burundian Franc',
+    flag: require('../assets/bi.png'),
+  },
+  BMD: {
+    name: 'Bermudian Dollar',
+    flag: require('../assets/bm.png'),
+  },
+  BND: {
+    name: 'Brunei Dollar',
+    flag: require('../assets/bn.png'),
+  },
+  BOB: {
+    name: 'Bolivian Boliviano',
+    flag: require('../assets/bo.png'),
+  },
+  BRL: {
+    name: 'Brazilian Real',
+    flag: require('../assets/br.png'),
+  },
+  BSD: {
+    name: 'Bahamian Dollar',
+    flag: require('../assets/bs.png'),
+  },
+  BTN: {
+    name: 'Bhutanese Ngultrum',
+    flag: require('../assets/bt.png'),
+  },
+  BWP: {
+    name: 'Botswana Pula',
+    flag: require('../assets/bw.png'),
+  },
+  BYN: {
+    name: 'Belarusian Ruble',
+    flag: require('../assets/by.png'),
+  },
+  BZD: {
+    name: 'Belize Dollar',
+    flag: require('../assets/bz.png'),
+  },
+  CAD: {
+    name: 'Canadian Dollar',
+    flag: require('../assets/ca.png'),
+  },
+  CDF: {
+    name: 'Congolese Franc',
+    flag: require('../assets/cd.png'),
+  },
+  CHF: {
+    name: 'Swiss Franc',
+    flag: require('../assets/ch.png'),
+  },
+  CLP: {
+    name: 'Chilean Peso',
+    flag: require('../assets/cl.png'),
+  },
+  CNY: {
+    name: 'Chinese Yuan',
+    flag: require('../assets/cn.png'),
+  },
+  COP: {
+    name: 'Colombian Peso',
+    flag: require('../assets/co.png'),
+  },
+  CRC: {
+    name: 'Costa Rican Colón',
+    flag: require('../assets/cr.png'),
+  },
+  CZK: {
+    name: 'Czech Koruna',
+    flag: require('../assets/cz.png'),
+  },
+  CUP: {
+    name: 'Cuban Peso',
+    flag: require('../assets/cu.png'),
+  },
+  DKK: {
+    name: 'Danish Krone',
+    flag: require('../assets/dk.png'),
+  },
+  DZD: {
+    name: 'Algerian Dinar',
+    flag: require('../assets/dz.png'),
+  },
+  EGP: {
+    name: 'Egyptian Pound',
+    flag: require('../assets/eg.png'),
+  },
+  ERN: {
+    name: 'Eritrean Nakfa',
+    flag: require('../assets/er.png'),
+  },
+  ETB: {
+    name: 'Ethiopian Birr',
+    flag: require('../assets/et.png'),
+  },
+  EUR: {
+    name: 'Euro',
+    flag: require('../assets/eu.png'),
+  },
+  FJD: {
+    name: 'Fijian Dollar',
+    flag: require('../assets/fj.png'),
+  },
+  GBP: {
+    name: 'British Pound Sterling',
+    flag: require('../assets/gb.png'),
+  },
+  GEL: {
+    name: 'Georgian Lari',
+    flag: require('../assets/ge.png'),
+  },
+  GHS: {
+    name: 'Ghanaian Cedi',
+    flag: require('../assets/gh.png'),
+  },
+  GIP: {
+    name: 'Gibraltar Pound',
+    flag: require('../assets/gi.png'),
+  },
+  GMD: {
+    name: 'Gambian Dalasi',
+    flag: require('../assets/gm.png'),
+  },
+  GNF: {
+    name: 'Guinean Franc',
+    flag: require('../assets/gn.png'),
+  },
+  GTQ: {
+    name: 'Guatemalan Quetzal',
+    flag: require('../assets/gt.png'),
+  },
+  GYD: {
+    name: 'Guyanese Dollar',
+    flag: require('../assets/gy.png'),
+  },
+  HKD: {
+    name: 'Hong Kong Dollar',
+    flag: require('../assets/hk.png'),
+  },
+  HNL: {
+    name: 'Honduran Lempira',
+    flag: require('../assets/hn.png'),
+  },
+  HRK: {
+    name: 'Croatian Kuna',
+    flag: require('../assets/hr.png'),
+  },
+  HUF: {
+    name: 'Hungarian Forint',
+    flag: require('../assets/hu.png'),
+  },
+  IDR: {
+    name: 'Indonesian Rupiah',
+    flag: require('../assets/id.png'),
+  },
+  ILS: {
+    name: 'Israeli New Shekel',
+    flag: require('../assets/il.png'),
+  },
+  INR: {
+    name: 'Indian Rupee',
+    flag: require('../assets/in.png'),
+  },
+  IQD: {
+    name: 'Iraqi Dinar',
+    flag: require('../assets/iq.png'),
+  },
+  IRR: {
+    name: 'Iranian Rial',
+    flag: require('../assets/ir.png'),
+  },
+  ISK: {
+    name: 'Icelandic Króna',
+    flag: require('../assets/is.png'),
+  },
+  JMD: {
+    name: 'Jamaican Dollar',
+    flag: require('../assets/jm.png'),
+  },
+  JOD: {
+    name: 'Jordanian Dinar',
+    flag: require('../assets/jo.png'),
+  },
+  JPY: {
+    name: 'Japanese Yen',
+    flag: require('../assets/jp.png'),
+  },
+  KES: {
+    name: 'Kenyan Shilling',
+    flag: require('../assets/ke.png'),
+  },
+  KGS: {
+    name: 'Kyrgyzstani Som',
+    flag: require('../assets/kg.png'),
+  },
+  KHR: {
+    name: 'Cambodian Riel',
+    flag: require('../assets/kh.png'),
+  },
+  KMF: {
+    name: 'Comorian Franc',
+    flag: require('../assets/km.png'),
+  },
+  KRW: {
+    name: 'South Korean Won',
+    flag: require('../assets/kr.png'),
+  },
+  KWD: {
+    name: 'Kuwaiti Dinar',
+    flag: require('../assets/kw.png'),
+  },
+  KZT: {
+    name: 'Kazakhstani Tenge',
+    flag: require('../assets/kz.png'),
+  },
+  LAK: {
+    name: 'Laotian Kip',
+    flag: require('../assets/la.png'),
+  },
+  LBP: {
+    name: 'Lebanese Pound',
+    flag: require('../assets/lb.png'),
+  },
+  LKR: {
+    name: 'Sri Lankan Rupee',
+    flag: require('../assets/lk.png'),
+  },
+  LRD: {
+    name: 'Liberian Dollar',
+    flag: require('../assets/lr.png'),
+  },
+  LYD: {
+    name: 'Libyan Dinar',
+    flag: require('../assets/ly.png'),
+  },
+  MAD: {
+    name: 'Moroccan Dirham',
+    flag: require('../assets/ma.png'),
+  },
+  MDL: {
+    name: 'Moldovan Leu',
+    flag: require('../assets/md.png'),
+  },
+  MGA: {
+    name: 'Malagasy Ariary',
+    flag: require('../assets/mg.png'),
+  },
+  MKD: {
+    name: 'Macedonian Denar',
+    flag: require('../assets/mk.png'),
+  },
+  MMK: {
+    name: 'Myanmar Kyat',
+    flag: require('../assets/mm.png'),
+  },
+  MNT: {
+    name: 'Mongolian Tögrög',
+    flag: require('../assets/mn.png'),
+  },
+  MOP: {
+    name: 'Macanese Pataca',
+    flag: require('../assets/mo.png'),
+  },
+  MUR: {
+    name: 'Mauritian Rupee',
+    flag: require('../assets/mu.png'),
+  },
+  MVR: {
+    name: 'Maldivian Rufiyaa',
+    flag: require('../assets/mv.png'),
+  },
+  MWK: {
+    name: 'Malawian Kwacha',
+    flag: require('../assets/mw.png'),
+  },
+  MXN: {
+    name: 'Mexican Peso',
+    flag: require('../assets/mx.png'),
+  },
+  MYR: {
+    name: 'Malaysian Ringgit',
+    flag: require('../assets/my.png'),
+  },
+  MZN: {
+    name: 'Mozambican Metical',
+    flag: require('../assets/mz.png'),
+  },
+  NAD: {
+    name: 'Namibian Dollar',
+    flag: require('../assets/na.png'),
+  },
+  NGN: {
+    name: 'Nigerian Naira',
+    flag: require('../assets/ng.png'),
+  },
+  NIO: {
+    name: 'Nicaraguan Córdoba',
+    flag: require('../assets/ni.png'),
+  },
+  NOK: {
+    name: 'Norwegian Krone',
+    flag: require('../assets/no.png'),
+  },
+  NPR: {
+    name: 'Nepalese Rupee',
+    flag: require('../assets/np.png'),
+  },
+  NZD: {
+    name: 'New Zealand Dollar',
+    flag: require('../assets/nz.png'),
+  },
+  OMR: {
+    name: 'Omani Rial',
+    flag: require('../assets/om.png'),
+  },
+  PAB: {
+    name: 'Panamanian Balboa',
+    flag: require('../assets/pa.png'),
+  },
+  PEN: {
+    name: 'Peruvian Sol',
+    flag: require('../assets/pe.png'),
+  },
+  PHP: {
+    name: 'Philippine Peso',
+    flag: require('../assets/ph.png'),
+  },
+  PKR: {
+    name: 'Pakistani Rupee',
+    flag: require('../assets/pk.png'),
+  },
+  PLN: {
+    name: 'Polish Złoty',
+    flag: require('../assets/pl.png'),
+  },
+  PYG: {
+    name: 'Paraguayan Guaraní',
+    flag: require('../assets/py.png'),
+  },
+  QAR: {
+    name: 'Qatari Riyal',
+    flag: require('../assets/qa.png'),
+  },
+  RON: {
+    name: 'Romanian Leu',
+    flag: require('../assets/ro.png'),
+  },
+  RSD: {
+    name: 'Serbian Dinar',
+    flag: require('../assets/rs.png'),
+  },
+  RUB: {
+    name: 'Russian Ruble',
+    flag: require('../assets/ru.png'),
+  },
+  RWF: {
+    name: 'Rwandan Franc',
+    flag: require('../assets/rw.png'),
+  },
+  SAR: {
+    name: 'Saudi Riyal',
+    flag: require('../assets/sa.png'),
+  },
+  SEK: {
+    name: 'Swedish Krona',
+    flag: require('../assets/se.png'),
+  },
+  SGD: {
+    name: 'Singapore Dollar',
+    flag: require('../assets/sg.png'),
+  },
+  THB: {
+    name: 'Thai Baht',
+    flag: require('../assets/th.png'),
+  },
+  TRY: {
+    name: 'Turkish Lira',
+    flag: require('../assets/tr.png'),
+  },
+  TWD: {
+    name: 'New Taiwan Dollar',
+    flag: require('../assets/tw.png'),
+  },
+  TZS: {
+    name: 'Tanzanian Shilling',
+    flag: require('../assets/tz.png'),
+  },
+  UAH: {
+    name: 'Ukrainian Hryvnia',
+    flag: require('../assets/ua.png'),
+  },
+  UGX: {
+    name: 'Ugandan Shilling',
+    flag: require('../assets/ug.png'),
+  },
+  USD: {
+    name: 'United States Dollar',
+    flag: require('../assets/us.png'),
+  },
+  UYU: {
+    name: 'Uruguayan Peso',
+    flag: require('../assets/uy.png'),
+  },
+  UZS: {
+    name: 'Uzbekistan Som',
+    flag: require('../assets/uz.png'),
+  },
+  VND: {
+    name: 'Vietnamese Dong',
+    flag: require('../assets/vn.png'),
+  },
+  ZAR: {
+    name: 'South African Rand',
+    flag: require('../assets/za.png'),
+  },
+  ZMW: {
+    name: 'Zambian Kwacha',
+    flag: require('../assets/zm.png'),
+  },
+  // ...Add or remove as needed...
+};
+
+
+// Custom picker component
+function CurrencyPicker({ selectedValue, onValueChange, currencies, currenciesData }) {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  return (
+    <View>
+      <TouchableOpacity style={styles.pickerButton} onPress={() => setModalVisible(true)}>
+        {selectedValue ? (
+          <View style={styles.pickerItem}>
+            {currenciesData[selectedValue] && (
+              <Image source={currenciesData[selectedValue].flag} style={styles.flagImage} />
+            )}
+            <Text>
+              {currenciesData[selectedValue]
+                ? `${currenciesData[selectedValue].name} (${selectedValue})`
+                : selectedValue}
+            </Text>
+          </View>
+        ) : (
+          <Text>Select a currency</Text>
+        )}
+      </TouchableOpacity>
+      <Modal visible={modalVisible} animationType="slide">
+        <View style={styles.modalContainer}>
+          <FlatList
+            data={currencies}
+            keyExtractor={(item) => item}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.modalItem}
+                onPress={() => {
+                  onValueChange(item);
+                  setModalVisible(false);
+                }}
+              >
+                {currenciesData[item] && (
+                  <Image source={currenciesData[item].flag} style={styles.flagImage} />
+                )}
+                <Text style={styles.modalText}>
+                  {currenciesData[item]
+                    ? `${currenciesData[item].name} (${item})`
+                    : item}
+                </Text>
+              </TouchableOpacity>
+            )}
+          />
+          <Button title="Close" onPress={() => setModalVisible(false)} />
+        </View>
+      </Modal>
+    </View>
+  );
+}
 
 export default function CurrencyConverter() {
   const [baseCurrency, setBaseCurrency] = useState('USD');
@@ -21,7 +572,7 @@ export default function CurrencyConverter() {
     try {
       const response = await fetch(`https://v6.exchangerate-api.com/v6/${API_KEY}/latest/USD`);
       const data = await response.json();
-      // Extract all available currency codes from the conversion_rates object.
+      // Extract available currency codes from the conversion_rates object.
       const currencyKeys = Object.keys(data.conversion_rates);
       if (!currencyKeys.includes(data.base_code)) {
         currencyKeys.push(data.base_code);
@@ -61,28 +612,22 @@ export default function CurrencyConverter() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Currency Converter</Text>
-
+      
       <Text>From:</Text>
-      <Picker
+      <CurrencyPicker 
         selectedValue={baseCurrency}
-        onValueChange={(itemValue) => setBaseCurrency(itemValue)}
-        style={styles.picker}
-      >
-        {currencies.map((currency) => (
-          <Picker.Item key={currency} label={currency} value={currency} />
-        ))}
-      </Picker>
-
+        onValueChange={setBaseCurrency}
+        currencies={currencies}
+        currenciesData={currenciesData}
+      />
+      
       <Text>To:</Text>
-      <Picker
+      <CurrencyPicker 
         selectedValue={targetCurrency}
-        onValueChange={(itemValue) => setTargetCurrency(itemValue)}
-        style={styles.picker}
-      >
-        {currencies.map((currency) => (
-          <Picker.Item key={currency} label={currency} value={currency} />
-        ))}
-      </Picker>
+        onValueChange={setTargetCurrency}
+        currencies={currencies}
+        currenciesData={currenciesData}
+      />
 
       <Text>Amount:</Text>
       <TextInput
@@ -119,11 +664,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
-  picker: {
-    height: 50,
-    width: '100%',
-    marginVertical: 10,
-  },
   input: {
     height: 40,
     borderColor: 'gray',
@@ -135,5 +675,35 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  pickerButton: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    padding: 10,
+    marginVertical: 10,
+  },
+  pickerItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  flagImage: {
+    width: 30,
+    height: 20,
+    marginRight: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    padding: 20,
+  },
+  modalItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'lightgray',
+  },
+  modalText: {
+    fontSize: 16,
+    marginLeft: 10,
   },
 });
