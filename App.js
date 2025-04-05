@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import CurrencyConvert from './features/CurrencyConvert';
+import CurrencyConverter from './components/CurrencyConverter';
 
 function HomeScreen() {
   return (
@@ -19,7 +19,7 @@ export default function App() {
     <NavigationContainer>
       <Drawer.Navigator initialRouteName="Home">
         <Drawer.Screen name="Home" component={HomeScreen} />
-        <Drawer.Screen name="Converter" component={CurrencyConvert} />
+        <Drawer.Screen name="Converter" component={CurrencyConverter} />
       </Drawer.Navigator>
     </NavigationContainer>
   );
