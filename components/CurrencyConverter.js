@@ -14,13 +14,10 @@ import {
 
 const API_KEY = '9e13da419adab6539177249e';
 
-// Mapping currency codes to their full names and flag images.
-// Ensure the images exist at the specified path.
-// In CurrencyConverter.js (or a separate file if you prefer)
 export const currenciesData = {
   AED: {
     name: 'United Arab Emirates Dirham',
-    flag: require('../assets/ae.png'), // Make sure you have "ae.png"
+    flag: require('../assets/ae.png'), 
   },
   AFN: {
     name: 'Afghan Afghani',
@@ -611,8 +608,6 @@ export default function CurrencyConverter() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Currency Converter</Text>
-      
       <Text>From:</Text>
       <CurrencyPicker 
         selectedValue={baseCurrency}
