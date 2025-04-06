@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import { TravelPlanContext } from '../TravelPlanContext'; // adjust the path as needed
+import { TravelPlanContext } from '../TravelPlanContext';
 import { useNavigation } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const GetStarted = () => {
   const navigation = useNavigation();
@@ -11,71 +12,78 @@ const GetStarted = () => {
   const [days, setDays] = useState('');
 
   const handleSubmit = () => {
-    // Save the answers in context
     setTravelPlan({ country, money, days });
-    // Navigate to the Home screen (or main page)
     navigation.navigate('Home');
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={['#0f2027', '#203a43', '#2c5364']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1.22, y: 1 }}
+      style={styles.container}
+    >
       <Text style={styles.title}>Get Started</Text>
+
       <Text style={styles.label}>Which country are you going to?</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter destination country"
-        placeholderTextColor="gray"
+        placeholderTextColor="lightgray"
         value={country}
         onChangeText={setCountry}
       />
+
       <Text style={styles.label}>How much money are you bringing?</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter amount"
-        placeholderTextColor="gray"
+        placeholderTextColor="lightgray"
         keyboardType="numeric"
         value={money}
         onChangeText={setMoney}
       />
+
       <Text style={styles.label}>How many days will you be staying?</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter number of days"
-        placeholderTextColor="gray"
+        placeholderTextColor="lightgray"
         keyboardType="numeric"
         value={days}
         onChangeText={setDays}
       />
+
       <Button title="Submit" onPress={handleSubmit} />
-    </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#e4ebe5',
     padding: 20,
+    justifyContent: 'center',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color:'black',
+    color: 'white',
     marginBottom: 20,
     textAlign: 'center',
   },
   label: {
-    color:'black',
+    color: 'white',
     fontWeight: 'bold',
     marginBottom: 5,
   },
   input: {
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: 'white',
     padding: 10,
     marginBottom: 15,
     borderRadius: 5,
-    color:'black',
+    color: 'white',
   },
 });
 

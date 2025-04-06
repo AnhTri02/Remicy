@@ -28,8 +28,6 @@ export default function Home() {
     start={{ x: 0, y: 0 }}
     end={{ x: 122, y: 1 }}
 
-
-
     // bakgrund
       style={styles.container}
     >

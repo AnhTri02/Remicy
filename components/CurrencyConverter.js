@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
 import { 
   View, 
   Text, 
@@ -151,6 +152,7 @@ function CurrencyPicker({ selectedValue, onValueChange, currencies, currenciesDa
   });
 
   return (
+    
     <View>
       <TouchableOpacity style={styles.pickerButton} onPress={() => setModalVisible(true)}>
         {selectedValue ? (
@@ -261,7 +263,12 @@ export default function CurrencyConverter() {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+    colors={['#0f2027', '#203a43', '#2c5364']}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1.22, y: 1 }}
+    style={styles.container}
+  >
       <Text style={{ color:'black' }}>From:</Text>
       <CurrencyPicker 
         selectedValue={baseCurrency}
@@ -299,7 +306,7 @@ export default function CurrencyConverter() {
           {amount} {baseCurrency} = {result} {targetCurrency}
         </Text>
       )}
-    </View>
+    </LinearGradient>
   );
 }
 
