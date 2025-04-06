@@ -42,12 +42,10 @@ export default function Home() {
       <View style={styles.balanceContainer}>
         <Text style={styles.balanceLabel}>Balance</Text>
         <Text style={styles.balanceValue}>${money || '0.00'}</Text>
-      </View>
-
-      {/* Daily Budget */}
-      <Text style={styles.dailyBudgetLabel}>
+        <Text style={styles.dailyBudgetLabel}>
         Daily Budget: ${dailyBudget}
       </Text>
+      </View>
 
       {/* Main Content Area */}
       <View style={styles.mainContent}>
@@ -55,7 +53,7 @@ export default function Home() {
         <ScrollView style={styles.leftSide} contentContainerStyle={styles.leftSideScroll}>
           {Array.from({ length: currentDay }, (_, index) => (
             <View style={styles.dayBox} key={index}>
-              <Text style={styles.dayBoxText}>Day {index + 1}</Text>
+            <Text style={styles.dayBoxText}>Day {index + 1}</Text>
             </View>
           ))}
 </ScrollView>
@@ -68,6 +66,16 @@ export default function Home() {
             <Text style={styles.historyItem}>Day 1: Spent $30</Text>
             <Text style={styles.historyItem}>Day 2: Spent $20</Text>
             <Text style={styles.historyItem}>Day 3: Spent $15</Text>
+            <Text style={styles.historyItem}>Day 1: Spent $30</Text>
+            <Text style={styles.historyItem}>Day 2: Spent $20</Text>
+            <Text style={styles.historyItem}>Day 3: Spent $15</Text>
+            <Text style={styles.historyItem}>Day 1: Spent $30</Text>
+            <Text style={styles.historyItem}>Day 2: Spent $20</Text>
+            <Text style={styles.historyItem}>Day 3: Spent $15</Text>
+            <Text style={styles.historyItem}>Day 1: Spent $30</Text>
+            <Text style={styles.historyItem}>Day 2: Spent $20</Text>
+            <Text style={styles.historyItem}>Day 3: Spent $15</Text>
+            
           </ScrollView>
         </View>
       </View>
@@ -147,10 +155,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   rightSide: {
-    width: 120,
+    width: 200,
     backgroundColor: '#fff',
     borderRadius: 5,
     padding: 10,
+    height: 250
   },
   historyTitle: {
     fontSize: 16,
