@@ -52,14 +52,14 @@ export default function Home() {
       {/* Main Content Area */}
       <View style={styles.mainContent}>
         {/* Left side: Day Boxes */}
-        <View style={styles.leftSide}>
+        <ScrollView style={styles.leftSide} contentContainerStyle={styles.leftSideScroll}>
           {Array.from({ length: currentDay }, (_, index) => (
             <View style={styles.dayBox} key={index}>
               <Text style={styles.dayBoxText}>Day {index + 1}</Text>
-              {/* Placeholder for spending input or display */}
             </View>
           ))}
-        </View>
+</ScrollView>
+
 
         {/* Right side: History (example) */}
         <View style={styles.rightSide}>
