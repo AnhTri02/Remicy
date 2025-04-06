@@ -5,4 +5,4 @@ This is my project app I've created called Remicy. Remicy is a traveling tool us
 
 Why did I create this app?
   During March 2025, I travelled to Korea and Japan
-  **ADD MORE LATER
+  **ADD MORE LATER**
