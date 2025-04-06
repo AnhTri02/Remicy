@@ -17,7 +17,7 @@ export default function App() {
         <Drawer.Navigator
           initialRouteName="Home" //sidan startar i Home
           screenOptions={{
-            sceneContainerStyle: { backgroundColor: '#e4ebe5' },
+            sceneContainerStyle: { backgroundColor: 'red' },
             drawerStyle: { backgroundColor: '#333' },
             headerStyle: { backgroundColor: '#333' },
             headerTintColor: 'white',

@@ -3,6 +3,7 @@ import React, { useContext, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { TravelPlanContext } from '../TravelPlanContext';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function Home() {
   const navigation = useNavigation();
@@ -22,8 +23,26 @@ export default function Home() {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Top Row: Country label and "New Day" button */}
+    <LinearGradient
+    colors={['#0f2027', '#203a43', '#2c5364']}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 122, y: 1 }}
+
+
+
+    // bakgrund
+      style={styles.container}
+    >
+      {/* Balance Container */}
+      <View style={styles.balanceContainer}>
+        <Text style={styles.balanceLabel}>Balance</Text>
+        <Text style={styles.balanceValue}>${money || '0.00'}</Text>
+        <Text style={styles.dailyBudgetLabel}>
+          Daily Budget: ${dailyBudget}
+        </Text>
+      </View>
+
+      {/* Top row: Country & button */}
       <View style={styles.topRow}>
         <Text style={styles.countryText}>Country: {country || 'N/A'}</Text>
         {currentDay < totalPlannedDays && (
@@ -38,55 +57,34 @@ export default function Home() {
         Day {currentDay}/{totalPlannedDays}
       </Text>
 
-      {/* Balance Container */}
-      <View style={styles.balanceContainer}>
-        <Text style={styles.balanceLabel}>Balance</Text>
-        <Text style={styles.balanceValue}>${money || '0.00'}</Text>
-        <Text style={styles.dailyBudgetLabel}>
-        Daily Budget: ${dailyBudget}
-      </Text>
-      </View>
-
-      {/* Main Content Area */}
+      {/* Main Content */}
       <View style={styles.mainContent}>
-        {/* Left side: Day Boxes */}
+        {/* Left: Day Boxes */}
         <ScrollView style={styles.leftSide} contentContainerStyle={styles.leftSideScroll}>
           {Array.from({ length: currentDay }, (_, index) => (
             <View style={styles.dayBox} key={index}>
-            <Text style={styles.dayBoxText}>Day {index + 1}</Text>
+              <Text style={styles.dayBoxText}>Day {index + 1}</Text>
             </View>
           ))}
-</ScrollView>
+        </ScrollView>
 
-
-        {/* Right side: History (example) */}
+        {/* Right: History */}
         <View style={styles.rightSide}>
           <Text style={styles.historyTitle}>History</Text>
           <ScrollView style={styles.historyScroll}>
-            <Text style={styles.historyItem}>Day 1: Spent $30</Text>
-            <Text style={styles.historyItem}>Day 2: Spent $20</Text>
-            <Text style={styles.historyItem}>Day 3: Spent $15</Text>
-            <Text style={styles.historyItem}>Day 1: Spent $30</Text>
-            <Text style={styles.historyItem}>Day 2: Spent $20</Text>
-            <Text style={styles.historyItem}>Day 3: Spent $15</Text>
-            <Text style={styles.historyItem}>Day 1: Spent $30</Text>
-            <Text style={styles.historyItem}>Day 2: Spent $20</Text>
-            <Text style={styles.historyItem}>Day 3: Spent $15</Text>
-            <Text style={styles.historyItem}>Day 1: Spent $30</Text>
-            <Text style={styles.historyItem}>Day 2: Spent $20</Text>
-            <Text style={styles.historyItem}>Day 3: Spent $15</Text>
-            
+            {Array.from({ length: 12 }, (_, i) => (
+              <Text key={i} style={styles.historyItem}>Day {i + 1}: Spent ${Math.floor(Math.random() * 40 + 10)}</Text>
+            ))}
           </ScrollView>
         </View>
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#e4ebe5',
     padding: 20,
     paddingTop: 40,
   },
@@ -94,46 +92,52 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: 10,
   },
   countryText: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#fff',
   },
   newButton: {
-    backgroundColor: '#333',
+    backgroundColor: '#fff',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 5,
   },
   newButtonText: {
-    color: 'white',
+    color: '#3e1e68',
     fontSize: 16,
+    fontWeight: 'bold',
   },
   dayText: {
     fontSize: 16,
     marginVertical: 10,
     fontWeight: 'bold',
+    color: '#fff',
   },
   balanceContainer: {
-    marginTop: 10,
-    marginBottom: 5,
-    padding: 15,
     backgroundColor: '#fff',
+    padding: 15,
     borderRadius: 5,
+    alignItems: 'flex-start',
   },
   balanceLabel: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#222',
   },
   balanceValue: {
     fontSize: 32,
     fontWeight: 'bold',
     marginTop: 5,
+    color: '#3e1e68',
   },
   dailyBudgetLabel: {
     fontSize: 16,
-    marginVertical: 10,
+    marginTop: 10,
     fontStyle: 'italic',
+    color: '#444',
   },
   mainContent: {
     flex: 1,
@@ -143,6 +147,9 @@ const styles = StyleSheet.create({
   leftSide: {
     flex: 1,
     marginRight: 10,
+  },
+  leftSideScroll: {
+    paddingBottom: 20,
   },
   dayBox: {
     backgroundColor: '#fff',
@@ -155,11 +162,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   rightSide: {
-    width: 200,
+    width: 180,
     backgroundColor: '#fff',
     borderRadius: 5,
     padding: 10,
-    height: 250
+    height: 250,
   },
   historyTitle: {
     fontSize: 16,
@@ -167,7 +174,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   historyScroll: {
-    maxHeight: 200,
+    flexGrow: 1,
   },
   historyItem: {
     marginBottom: 5,
