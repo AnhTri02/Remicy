@@ -264,7 +264,7 @@ export default function CurrencyConverter() {
 
   return (
     <LinearGradient
-    colors={['#0f2027', '#203a43', '#2c5364']}
+    colors={['#1a1a2e', '#3f0d40', '#000000']}
     start={{ x: 0, y: 0 }}
     end={{ x: 1.22, y: 1 }}
     style={styles.container}

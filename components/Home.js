@@ -24,21 +24,26 @@ export default function Home() {
 
   return (
     <LinearGradient
-    colors={['#0f2027', '#203a43', '#2c5364']}
+    colors={['#1a1a2e', '#3f0d40', '#000000']}
     start={{ x: 0, y: 0 }}
-    end={{ x: 122, y: 1 }}
+    end={{ x: 1, y: 1 }}
 
     // bakgrund
       style={styles.container}
     >
       {/* Balance Container */}
-      <View style={styles.balanceContainer}>
+      <LinearGradient
+  colors={['#2d1b3c', '#51294c', '#100c1d']}
+  start={{ x: 0, y: 0 }}
+  end={{ x: 1, y: 1 }}
+  style={styles.balanceContainer}
+>
         <Text style={styles.balanceLabel}>Balance</Text>
         <Text style={styles.balanceValue}>${money || '0.00'}</Text>
         <Text style={styles.dailyBudgetLabel}>
           Daily Budget: ${dailyBudget}
         </Text>
-      </View>
+      </LinearGradient>
 
       {/* Top row: Country & button */}
       <View style={styles.topRow}>
@@ -95,7 +100,7 @@ const styles = StyleSheet.create({
   countryText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
+    color: 'white',
   },
   newButton: {
     backgroundColor: '#fff',
@@ -112,10 +117,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginVertical: 10,
     fontWeight: 'bold',
-    color: '#fff',
+    color: 'white',
   },
   balanceContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: '#4a6572'
+,
     padding: 25,
     borderRadius: 20,
     alignItems: 'flex-start',
@@ -126,19 +132,22 @@ const styles = StyleSheet.create({
   balanceLabel: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#222',
+    color: '#e0e0ff'
+,
   },
   balanceValue: {
     fontSize: 32,
     fontWeight: 'bold',
     marginTop: 5,
-    color: '#3e1e68',
+    color: '#e0e0ff'
+    ,
   },
   dailyBudgetLabel: {
     fontSize: 16,
     marginTop: 10,
     fontStyle: 'italic',
-    color: '#444',
+    color: '#e0e0ff'
+,
   },
   mainContent: {
     flex: 1,
