@@ -221,6 +221,13 @@ export default function CurrencyConverter() {
     fetchCurrencies();
   }, []);
 
+  const reverseCurrencies = () => {
+    const temp = baseCurrency;
+    setBaseCurrency(targetCurrency);
+    setTargetCurrency(temp);
+  };
+  
+
   const fetchCurrencies = async () => {
     try {
       const response = await fetch(`https://v6.exchangerate-api.com/v6/${API_KEY}/latest/USD`);
@@ -277,8 +284,8 @@ export default function CurrencyConverter() {
     start={{ x: 0, y: 0 }}
     end={{ x: 1.22, y: 1 }}
     style={styles.container}
-  >
-      <Text style={{ color:'white' }}>From:</Text>
+  > 
+      <Text style={{ color:'white', fontWeight: 'bold' }}>From:</Text>
       <CurrencyPicker 
         selectedValue={baseCurrency}
         onValueChange={setBaseCurrency}
@@ -286,7 +293,7 @@ export default function CurrencyConverter() {
         currenciesData={currenciesData}
       />
       
-      <Text style={{ color:'white' }}>To:</Text>
+      <Text style={{ color:'white', fontWeight: 'bold' }}>To:</Text>
       <CurrencyPicker 
         selectedValue={targetCurrency}
         onValueChange={setTargetCurrency}
@@ -294,7 +301,7 @@ export default function CurrencyConverter() {
         currenciesData={currenciesData}
       />
 
-      <Text style={{ color:'white' }}>Amount:</Text>
+      <Text style={{ color:'white', fontWeight: 'bold'}}>Amount:</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter amount"
@@ -303,7 +310,9 @@ export default function CurrencyConverter() {
         onChangeText={setAmount}
         keyboardType="numeric"
       />
-
+       <TouchableOpacity onPress={reverseCurrencies} style={styles.reverseButton}>
+        <Text style={styles.reverseText}>⇄ Reverse</Text>
+      </TouchableOpacity>
     
 
       {result && (
@@ -318,9 +327,8 @@ export default function CurrencyConverter() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 10,
     justifyContent: 'center',
-    
     backgroundColor: '#e4ebe5'
     
   },
@@ -334,7 +342,7 @@ const styles = StyleSheet.create({
   },
   result: {
     marginTop: 20,
-    fontSize: 18,
+    fontSize: 25,
     fontWeight: 'bold',
     color:'white'
   },
@@ -385,6 +393,18 @@ const styles = StyleSheet.create({
   currencyCode: {
     fontWeight: 'bold',
     color: 'black',
+  },
+  reverseButton: {
+    marginVertical: 10,
+    backgroundColor: '#443a47',
+    padding: 10,
+    borderRadius: 5,
+    width: '25%'
+  },
+  reverseText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'left',
   },
   
 });
