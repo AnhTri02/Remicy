@@ -9,30 +9,33 @@ export default function Home() {
   const { travelPlan } = useContext(TravelPlanContext);
   const { country, money, days } = travelPlan;
 
-  // For demonstration, the current day is stored in local state.
+  const totalPlannedDays = parseInt(days, 10) || 1;
   const [currentDay, setCurrentDay] = useState(1);
 
-  // Compute daily budget
-  const totalMoney = parseFloat(money) || 0;
-  const totalDays = parseInt(days, 10) || 1;
-  const dailyBudget = totalMoney && totalDays ? (totalMoney / totalDays).toFixed(2) : '0.00';
+  const totalBalance = parseFloat(money) || 0;
+  const dailyBudget = totalBalance && totalPlannedDays ? (totalBalance / totalPlannedDays).toFixed(2) : '0.00';
+
+  const handleNewDay = () => {
+    if (currentDay < totalPlannedDays) {
+      setCurrentDay(currentDay + 1);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      {/* Top Row: Country label and "New" button */}
+      {/* Top Row: Country label and "New Day" button */}
       <View style={styles.topRow}>
         <Text style={styles.countryText}>Country: {country || 'N/A'}</Text>
-        <TouchableOpacity 
-          style={styles.newButton} 
-          onPress={() => navigation.navigate('Get Started')}
-        >
-          <Text style={styles.newButtonText}>New</Text>
-        </TouchableOpacity>
+        {currentDay < totalPlannedDays && (
+          <TouchableOpacity style={styles.newButton} onPress={handleNewDay}>
+            <Text style={styles.newButtonText}>New Day</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Current Day Indicator */}
       <Text style={styles.dayText}>
-        Day {currentDay}/{days || 1}
+        Day {currentDay}/{totalPlannedDays}
       </Text>
 
       {/* Balance Container */}
@@ -46,19 +49,19 @@ export default function Home() {
         Daily Budget: ${dailyBudget}
       </Text>
 
-      {/* Main Content Area: Left side (Day boxes) + Right side (History) */}
+      {/* Main Content Area */}
       <View style={styles.mainContent}>
         {/* Left side: Day Boxes */}
         <View style={styles.leftSide}>
-          {Array.from({ length: totalDays }, (_, index) => (
+          {Array.from({ length: currentDay }, (_, index) => (
             <View style={styles.dayBox} key={index}>
               <Text style={styles.dayBoxText}>Day {index + 1}</Text>
-              {/* In a real app, you might track spending per day here */}
+              {/* Placeholder for spending input or display */}
             </View>
           ))}
         </View>
 
-        {/* Right side: History */}
+        {/* Right side: History (example) */}
         <View style={styles.rightSide}>
           <Text style={styles.historyTitle}>History</Text>
           <ScrollView style={styles.historyScroll}>
@@ -101,6 +104,7 @@ const styles = StyleSheet.create({
   dayText: {
     fontSize: 16,
     marginVertical: 10,
+    fontWeight: 'bold',
   },
   balanceContainer: {
     marginTop: 10,
@@ -108,7 +112,6 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: '#fff',
     borderRadius: 5,
-    alignItems: 'center',
   },
   balanceLabel: {
     fontSize: 18,

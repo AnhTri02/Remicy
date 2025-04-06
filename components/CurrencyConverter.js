@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pickerText: {
-    color:'black', // white text for selected currency display
+    color:'black', // black text for selected currency display
   },
   flagImage: {
     width: 30,
@@ -365,6 +365,6 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: 16,
     marginLeft: 10,
-    color:'black' // white text for currency names in the modal
+    color:'black' // black text for currency names in the modal
   },
 });
