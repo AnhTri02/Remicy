@@ -8,6 +8,7 @@ export const TravelPlanProvider = ({ children }) => {
     country: '',
     money: '',
     days: '',
+    spending: {}
   });
 
   return (
