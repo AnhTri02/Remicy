@@ -195,10 +195,10 @@ function CurrencyPicker({ selectedValue, onValueChange, currencies, currenciesDa
                   <Image source={currenciesData[item].flag} style={styles.flagImage} />
                 )}
                 <Text style={styles.modalText}>
-                  {currenciesData[item]
-                    ? `${currenciesData[item].name} (${item})`
-                    : item}
-                </Text>
+            {currenciesData[item]?.name}{' '}
+            <Text style={styles.currencyCode}>({item})</Text>
+              </Text>
+
               </TouchableOpacity>
             )}
           />
@@ -210,8 +210,8 @@ function CurrencyPicker({ selectedValue, onValueChange, currencies, currenciesDa
 }
 
 export default function CurrencyConverter() {
-  const [baseCurrency, setBaseCurrency] = useState('USD');
-  const [targetCurrency, setTargetCurrency] = useState('EUR');
+  const [baseCurrency, setBaseCurrency] = useState('SEK');
+  const [targetCurrency, setTargetCurrency] = useState('JPY');
   const [amount, setAmount] = useState('');
   const [result, setResult] = useState(null);
   const [currencies, setCurrencies] = useState([]);
@@ -269,7 +269,7 @@ export default function CurrencyConverter() {
     end={{ x: 1.22, y: 1 }}
     style={styles.container}
   >
-      <Text style={{ color:'black' }}>From:</Text>
+      <Text style={{ color:'white' }}>From:</Text>
       <CurrencyPicker 
         selectedValue={baseCurrency}
         onValueChange={setBaseCurrency}
@@ -277,7 +277,7 @@ export default function CurrencyConverter() {
         currenciesData={currenciesData}
       />
       
-      <Text style={{ color:'black' }}>To:</Text>
+      <Text style={{ color:'white' }}>To:</Text>
       <CurrencyPicker 
         selectedValue={targetCurrency}
         onValueChange={setTargetCurrency}
@@ -285,7 +285,7 @@ export default function CurrencyConverter() {
         currenciesData={currenciesData}
       />
 
-      <Text style={{ color:'black' }}>Amount:</Text>
+      <Text style={{ color:'white' }}>Amount:</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter amount"
@@ -314,7 +314,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    justifyContent: 'center',
+    
     backgroundColor: '#e4ebe5'
+    
   },
   input: {
     height: 40,
@@ -322,13 +325,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginVertical: 10,
     paddingHorizontal: 10,
-    color:'black'
+    color:'white'
   },
   result: {
     marginTop: 20,
     fontSize: 18,
     fontWeight: 'bold',
-    color:'black'
+    color:'white'
   },
   pickerButton: {
     borderWidth: 1,
@@ -341,7 +344,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pickerText: {
-    color:'black', // black text for selected currency display
+    color:'white', // white text for selected currency display
   },
   flagImage: {
     width: 30,
@@ -372,6 +375,11 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: 16,
     marginLeft: 10,
-    color:'black' // black text for currency names in the modal
+    color:'black' // white text for currency names in the modal
   },
+  currencyCode: {
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  
 });

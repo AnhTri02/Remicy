@@ -1,4 +1,3 @@
-// components/Home.js
 import React, { useContext, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -24,20 +23,17 @@ export default function Home() {
 
   return (
     <LinearGradient
-    colors={['#1a1a2e', '#3f0d40', '#000000']}
-    start={{ x: 0, y: 0 }}
-    end={{ x: 1, y: 1 }}
-
-    // bakgrund
+      colors={['#1a1a2e', '#3f0d40', '#000000']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 3, y: 2 }}
       style={styles.container}
     >
-      {/* Balance Container */}
       <LinearGradient
-  colors={['#2d1b3c', '#51294c', '#100c1d']}
-  start={{ x: 0, y: 0 }}
-  end={{ x: 1, y: 1 }}
-  style={styles.balanceContainer}
->
+        colors={['#2d1b3c', '#51294c', '#100c1d']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.balanceContainer}
+      >
         <Text style={styles.balanceLabel}>Balance</Text>
         <Text style={styles.balanceValue}>${money || '0.00'}</Text>
         <Text style={styles.dailyBudgetLabel}>
@@ -45,7 +41,6 @@ export default function Home() {
         </Text>
       </LinearGradient>
 
-      {/* Top row: Country & button */}
       <View style={styles.topRow}>
         <Text style={styles.countryText}>Country: {country || 'N/A'}</Text>
         {currentDay < totalPlannedDays && (
@@ -55,31 +50,38 @@ export default function Home() {
         )}
       </View>
 
-      {/* Current Day Indicator */}
       <Text style={styles.dayText}>
         Day {currentDay}/{totalPlannedDays}
       </Text>
 
-      {/* Main Content */}
       <View style={styles.mainContent}>
-        {/* Left: Day Boxes */}
         <ScrollView style={styles.leftSide} contentContainerStyle={styles.leftSideScroll}>
           {Array.from({ length: currentDay }, (_, index) => (
-            <View style={styles.dayBox} key={index}>
+            <LinearGradient
+              key={index}
+              colors={['#2c2c54', '#434371', '#1b1b3a']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.dayBox}
+            >
               <Text style={styles.dayBoxText}>Day {index + 1}</Text>
-            </View>
+            </LinearGradient>
           ))}
         </ScrollView>
 
-        {/* Right: History */}
-        <View style={styles.rightSide}>
+        <LinearGradient
+          colors={['#3b1f3e', '#5b2a60', '#241629']}
+          start={{ x:0, y: 0.24 }}
+          end={{ x: 0, y: -0.13 }}
+          style={styles.rightSide}
+        >
           <Text style={styles.historyTitle}>History</Text>
           <ScrollView style={styles.historyScroll}>
             {Array.from({ length: 12 }, (_, i) => (
               <Text key={i} style={styles.historyItem}>Day {i + 1}: Spent ${Math.floor(Math.random() * 40 + 10)}</Text>
             ))}
           </ScrollView>
-        </View>
+        </LinearGradient>
       </View>
     </LinearGradient>
   );
@@ -120,34 +122,28 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   balanceContainer: {
-    backgroundColor: '#4a6572'
-,
     padding: 25,
     borderRadius: 20,
     alignItems: 'flex-start',
     width: '100%',
     justifyContent: 'center',
-    
   },
   balanceLabel: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#e0e0ff'
-,
+    color: 'white',
   },
   balanceValue: {
     fontSize: 32,
     fontWeight: 'bold',
     marginTop: 5,
-    color: '#e0e0ff'
-    ,
+    color: 'white',
   },
   dailyBudgetLabel: {
     fontSize: 16,
     marginTop: 10,
     fontStyle: 'italic',
-    color: '#e0e0ff'
-,
+    color: 'white',
   },
   mainContent: {
     flex: 1,
@@ -162,7 +158,6 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   dayBox: {
-    backgroundColor: '#fff',
     padding: 15,
     marginBottom: 10,
     borderRadius: 5,
@@ -170,10 +165,10 @@ const styles = StyleSheet.create({
   dayBoxText: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: 'white',
   },
   rightSide: {
-    width: 180,
-    backgroundColor: '#fff',
+    width: '30%',
     borderRadius: 5,
     padding: 10,
     height: 250,
@@ -182,11 +177,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: 'white',
   },
   historyScroll: {
     flexGrow: 1,
   },
   historyItem: {
     marginBottom: 5,
+    color: 'white',
   },
 });
