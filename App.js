@@ -12,80 +12,77 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { TravelPlanProvider, TravelPlanContext } from './TravelPlanContext';
 import GetStarted from './components/GetStarted';
 import CurrencyConverter from './components/CurrencyConverter';
-import DailySpend from './components/DailySpend';
 
 const Drawer = createDrawerNavigator();
 
-// HomeScreen defined inside App.js
-function HomeScreen({ navigation }) {
+function HomeScreen() {
+  const navigation = useNavigation();
   const { travelPlan } = useContext(TravelPlanContext);
-  const { country, money, days, spending } = travelPlan;
+  const { country, money, days } = travelPlan;
 
-  // Keep track of the current day added (initially, 1 day is always present)
+  // For demonstration, let's say the user is currently on Day 3 of Y.
+  // In a real app, you might store or compute this differently.
   const [currentDay, setCurrentDay] = useState(1);
 
-  // Compute daily budget (if total days from GetStarted is provided)
+  // Compute daily budget
   const totalMoney = parseFloat(money) || 0;
-  const totalPlannedDays = parseInt(days, 10) || 1;
-  const dailyBudget = totalMoney && totalPlannedDays ? (totalMoney / totalPlannedDays).toFixed(2) : '0.00';
-
-  // Function to add a new day (increment the current day)
-  const addDay = () => {
-    if (currentDay < totalPlannedDays) {
-      setCurrentDay(currentDay + 1);
-    }
-  };
+  const totalDays = parseInt(days, 10) || 1;
+  const dailyBudget = totalMoney && totalDays ? (totalMoney / totalDays).toFixed(2) : '0.00';
 
   return (
     <View style={styles.container}>
-      {/* Top Row: Country label and "Get New Plan" button */}
+      {/* Top Row: Country label and "New" button */}
       <View style={styles.topRow}>
-        <Text style={styles.countryText}>Destination: {country || 'N/A'}</Text>
+        <Text style={styles.countryText}>Country: {country || 'N/A'}</Text>
         <TouchableOpacity 
-          style={styles.planButton} 
+          style={styles.newButton} 
           onPress={() => navigation.navigate('Get Started')}
         >
-          <Text style={styles.planButtonText}>Edit Plan</Text>
+          <Text style={styles.newButtonText}>New</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Day & Budget Info */}
+      {/* Current Day Indicator */}
       <Text style={styles.dayText}>
-        Current Day: {currentDay}/{totalPlannedDays}
+        Day {currentDay}/{days || 1}
       </Text>
+
+      {/* Balance Container */}
       <View style={styles.balanceContainer}>
-        <Text style={styles.balanceLabel}>Budget</Text>
+        <Text style={styles.balanceLabel}>Balance</Text>
         <Text style={styles.balanceValue}>${money || '0.00'}</Text>
       </View>
+
+      {/* Daily Budget */}
       <Text style={styles.dailyBudgetLabel}>
         Daily Budget: ${dailyBudget}
       </Text>
 
-      {/* Button to add a new day (if applicable) */}
-      {currentDay < totalPlannedDays && (
-        <TouchableOpacity style={styles.addDayButton} onPress={addDay}>
-          <Text style={styles.addDayButtonText}>Add Day</Text>
-        </TouchableOpacity>
-      )}
+      {/* Main Content Area: Left side (Day boxes) + Right side (History) */}
+      <View style={styles.mainContent}>
+        {/* Left side: Day Boxes */}
+        <View style={styles.leftSide}>
+          {/* Example: Generate boxes for each day */}
+          {Array.from({ length: totalDays }, (_, index) => (
+            <View style={styles.dayBox} key={index}>
+              <Text style={styles.dayBoxText}>Day {index + 1}</Text>
+              {/* In a real app, you might track spending per day here */}
+            </View>
+          ))}
+        </View>
 
-      {/* Day Boxes: Each day box is pressable to open DailySpend */}
-      <ScrollView contentContainerStyle={styles.daysContainer}>
-        {Array.from({ length: currentDay }, (_, index) => {
-          const dayNumber = index + 1;
-          return (
-            <TouchableOpacity
-              key={dayNumber}
-              style={styles.dayBox}
-              onPress={() => navigation.navigate('DailySpend', { day: dayNumber })}
-            >
-              <Text style={styles.dayBoxText}>Day {dayNumber}</Text>
-              <Text style={styles.spendingText}>
-                Spent: ${spending[dayNumber] || '0.00'}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
+        {/* Right side: History */}
+        <View style={styles.rightSide}>
+          <Text style={styles.historyTitle}>History</Text>
+          <ScrollView style={styles.historyScroll}>
+            {/* Example items; replace with real data */}
+            <Text style={styles.historyItem}>Day 1: Spent $30</Text>
+            <Text style={styles.historyItem}>Day 2: Spent $20</Text>
+            <Text style={styles.historyItem}>Day 3: Spent $15</Text>
+            {/* ... */}
+          </ScrollView>
+        </View>
+      </View>
     </View>
   );
 }
@@ -109,11 +106,6 @@ export default function App() {
           <Drawer.Screen name="Home" component={HomeScreen} />
           <Drawer.Screen name="Get Started" component={GetStarted} />
           <Drawer.Screen name="Converter" component={CurrencyConverter} />
-          <Drawer.Screen
-            name="DailySpend"
-            component={DailySpend}
-            options={{ drawerItemStyle: { height: 0 } }} // Hides this screen from the drawer menu
-          />
         </Drawer.Navigator>
       </NavigationContainer>
     </TravelPlanProvider>
@@ -123,7 +115,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#e4ebe5',
+    backgroundColor: '#e4ebe5', // from your request
     padding: 20,
     paddingTop: 40,
   },
@@ -135,22 +127,20 @@ const styles = StyleSheet.create({
   countryText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'black',
   },
-  planButton: {
+  newButton: {
     backgroundColor: '#333',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 5,
   },
-  planButtonText: {
+  newButtonText: {
     color: 'white',
     fontSize: 16,
   },
   dayText: {
     fontSize: 16,
     marginVertical: 10,
-    color: 'black',
   },
   balanceContainer: {
     marginTop: 10,
@@ -163,52 +153,51 @@ const styles = StyleSheet.create({
   balanceLabel: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'black',
   },
   balanceValue: {
     fontSize: 32,
     fontWeight: 'bold',
     marginTop: 5,
-    color: 'black',
   },
   dailyBudgetLabel: {
     fontSize: 16,
     marginVertical: 10,
     fontStyle: 'italic',
-    color: 'black',
   },
-  addDayButton: {
-    backgroundColor: '#333',
-    padding: 10,
-    borderRadius: 5,
-    alignSelf: 'center',
-    marginVertical: 10,
+  mainContent: {
+    flex: 1,
+    flexDirection: 'row', // left side (days) and right side (history) side by side
+    marginTop: 10,
   },
-  addDayButtonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  daysContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
+  leftSide: {
+    flex: 1,
+    marginRight: 10,
   },
   dayBox: {
     backgroundColor: '#fff',
     padding: 15,
-    margin: 5,
+    marginBottom: 10,
     borderRadius: 5,
-    width: 100,
-    alignItems: 'center',
   },
   dayBoxText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'black',
   },
-  spendingText: {
-    fontSize: 14,
-    marginTop: 5,
-    color: 'black',
+  rightSide: {
+    width: 120, // or adjust to your liking
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    padding: 10,
+  },
+  historyTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  historyScroll: {
+    maxHeight: 200,
+  },
+  historyItem: {
+    marginBottom: 5,
   },
 });
