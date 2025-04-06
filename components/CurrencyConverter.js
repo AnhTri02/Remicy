@@ -217,7 +217,6 @@ export default function CurrencyConverter() {
   const [currencies, setCurrencies] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch supported currencies on mount using USD as base
   useEffect(() => {
     fetchCurrencies();
   }, []);
@@ -239,7 +238,7 @@ export default function CurrencyConverter() {
   const convertCurrency = async () => {
     const inputAmount = parseFloat(amount);
     if (isNaN(inputAmount)) {
-      alert('Please enter a valid number');
+      setResult(null);
       return;
     }
     try {
@@ -248,19 +247,29 @@ export default function CurrencyConverter() {
       const data = await response.json();
       const rate = data.conversion_rates[targetCurrency];
       if (!rate) {
-        alert('Conversion rate not available');
+        setResult(null);
         setLoading(false);
         return;
       }
       const convertedAmount = inputAmount * rate;
-      setResult(convertedAmount.toFixed(2));
+      setResult(Number(convertedAmount.toFixed(2)).toLocaleString());
+
       setLoading(false);
     } catch (error) {
       console.error('Error converting currency:', error);
-      alert('Error fetching conversion rate');
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const inputAmount = parseFloat(amount);
+    if (!isNaN(inputAmount) && baseCurrency && targetCurrency) {
+      convertCurrency();
+    } else {
+      setResult(null);
+    }
+  }, [amount, baseCurrency, targetCurrency]);
+
 
   return (
     <LinearGradient
@@ -295,11 +304,7 @@ export default function CurrencyConverter() {
         keyboardType="numeric"
       />
 
-      {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : (
-        <Button title="Convert" onPress={convertCurrency} />
-      )}
+    
 
       {result && (
         <Text style={styles.result}>
