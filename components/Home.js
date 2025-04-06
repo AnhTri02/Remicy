@@ -116,9 +116,12 @@ const styles = StyleSheet.create({
   },
   balanceContainer: {
     backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 5,
+    padding: 25,
+    borderRadius: 20,
     alignItems: 'flex-start',
+    width: '100%',
+    justifyContent: 'center',
+    
   },
   balanceLabel: {
     fontSize: 18,
