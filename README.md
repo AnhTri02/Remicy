@@ -1,10 +1,13 @@
 # Welcome my app Remicy👋
-CREATOR: Tri Pham
-Tester: Stella Huynh
-ATM functionality idea: Louice Ha
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+#CREATOR: Tri Pham
+#Tester: Stella Huynh
+#ATM functionality idea: Louice Ha
 
+#This is my project app I've created called Remicy. Remicy is a traveling tool used to help you track your budget when travelling with cash, while also having a currency converter feature.
 ## Get started
+#Why did I create this app?
+  #During March 2025, I travelled to Korea and Japan
+  #**ADD MORE LATER**
 
 1. Install dependencies
 
