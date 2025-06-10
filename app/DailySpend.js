@@ -1,7 +1,7 @@
 // components/DailySpend.js
-import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import { TravelPlanContext } from '../TravelPlanContext';
+import { useContext, useState } from 'react';
+import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { TravelPlanContext } from './TravelPlanContext';
 
 const DailySpend = ({ route, navigation }) => {
   const { day } = route.params;

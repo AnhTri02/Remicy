@@ -1,8 +1,8 @@
-import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import { TravelPlanContext } from '../TravelPlanContext';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useContext, useState } from 'react';
+import { Button, StyleSheet, Text, TextInput } from 'react-native';
+import { TravelPlanContext } from './TravelPlanContext';
 
 const GetStarted = () => {
   const navigation = useNavigation();

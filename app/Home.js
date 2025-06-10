@@ -1,8 +1,8 @@
-import React, { useContext, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { TravelPlanContext } from '../TravelPlanContext';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useContext, useState } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { TravelPlanContext } from './TravelPlanContext';
 
 export default function Home() {
   const navigation = useNavigation();
