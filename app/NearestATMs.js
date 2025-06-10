@@ -1,22 +1,46 @@
+// app/NearestATMs.js
 import * as Location from 'expo-location';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Platform, StyleSheet, Text, View } from 'react-native';
-import { WebView } from 'react-native-webview';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
 
 export default function NearestATMs() {
   const [location, setLocation] = useState(null);
+  const [atms, setATMs] = useState([]);
   const [errorMsg, setErrorMsg] = useState(null);
 
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Location permission denied');
-        return;
-      }
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          setErrorMsg('Location permission denied');
+          return;
+        }
 
-      let loc = await Location.getCurrentPositionAsync({});
-      setLocation(loc.coords);
+        const loc = await Location.getCurrentPositionAsync({});
+        setLocation(loc.coords);
+
+        const query = `
+          [out:json];
+          node["amenity"="atm"](around:10000,${loc.coords.latitude},${loc.coords.longitude});
+          out body;
+        `;
+
+        const response = await fetch('https://overpass-api.de/api/interpreter', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `data=${encodeURIComponent(query)}`,
+        });
+
+        const data = await response.json();
+        console.log('ATM data:', data.elements); // Debug-logg
+        const filtered = (data.elements || []).filter(e => e.lat && e.lon);
+        setATMs(filtered);
+      } catch (error) {
+        console.error(error);
+        setErrorMsg('Failed to fetch ATM data');
+      }
     })();
   }, []);
 
@@ -37,26 +61,32 @@ export default function NearestATMs() {
     );
   }
 
-  const { latitude, longitude } = location;
-  const mapURL = `https://www.openstreetmap.org/export/embed.html?bbox=${longitude - 0.01},${latitude - 0.01},${longitude + 0.01},${latitude + 0.01}&layer=mapnik&marker=${latitude},${longitude}`;
-
   return (
-    <View style={styles.container}>
-      <WebView
-        source={{ uri: mapURL }}
-        style={{ flex: 1 }}
-        javaScriptEnabled
-        originWhitelist={['*']}
-      />
-    </View>
+    <MapView
+      style={styles.map}
+      initialRegion={{
+        latitude: location.latitude,
+        longitude: location.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      }}
+      showsUserLocation
+    >
+      {atms.map((atm) => (
+        <Marker
+          key={atm.id}
+          coordinate={{ latitude: atm.lat, longitude: atm.lon }}
+          title="ATM HERE!!!"
+          description="Bankomat bitch"
+        />
+      ))}
+    </MapView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#1a1a2e',
-    paddingTop: Platform.OS === 'android' ? 25 : 40,
+  map: {
+    ...StyleSheet.absoluteFillObject,
   },
   center: {
     flex: 1,

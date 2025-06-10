@@ -1,16 +1,20 @@
-import React, { useState, useEffect } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  Button, 
-  StyleSheet, 
-  ActivityIndicator, 
-  Modal, 
-  FlatList, 
-  TouchableOpacity, 
-  Image 
+import { useEffect, useState } from 'react';
+import {
+  Button,
+  FlatList,
+  Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View
 } from 'react-native';
 
 const API_KEY = '9e13da419adab6539177249e';
@@ -136,15 +140,12 @@ export const currenciesData = {
   VND: { name: 'Vietnamese Dong', flag: require('../assets/vn.png') },
   ZAR: { name: 'South African Rand', flag: require('../assets/za.png') },
   ZMW: { name: 'Zambian Kwacha', flag: require('../assets/zm.png') },
-  // ...Add or remove as needed...
 };
 
-// Custom picker component with search functionality
 function CurrencyPicker({ selectedValue, onValueChange, currencies, currenciesData }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Filter currencies based on search query
   const filteredCurrencies = currencies.filter((currency) => {
     const info = currenciesData[currency];
     const searchString = info ? `${info.name} (${currency})` : currency;
@@ -152,7 +153,6 @@ function CurrencyPicker({ selectedValue, onValueChange, currencies, currenciesDa
   });
 
   return (
-    
     <View>
       <TouchableOpacity style={styles.pickerButton} onPress={() => setModalVisible(true)}>
         {selectedValue ? (
@@ -170,6 +170,7 @@ function CurrencyPicker({ selectedValue, onValueChange, currencies, currenciesDa
           <Text style={styles.pickerText}>Select a currency</Text>
         )}
       </TouchableOpacity>
+
       <Modal visible={modalVisible} animationType="slide">
         <View style={styles.modalContainer}>
           <TextInput
@@ -195,10 +196,9 @@ function CurrencyPicker({ selectedValue, onValueChange, currencies, currenciesDa
                   <Image source={currenciesData[item].flag} style={styles.flagImage} />
                 )}
                 <Text style={styles.modalText}>
-            {currenciesData[item]?.name}{' '}
-            <Text style={styles.currencyCode}>({item})</Text>
-              </Text>
-
+                  {currenciesData[item]?.name}{' '}
+                  <Text style={styles.currencyCode}>({item})</Text>
+                </Text>
               </TouchableOpacity>
             )}
           />
@@ -215,7 +215,6 @@ export default function CurrencyConverter() {
   const [amount, setAmount] = useState('');
   const [result, setResult] = useState(null);
   const [currencies, setCurrencies] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchCurrencies();
@@ -226,16 +225,12 @@ export default function CurrencyConverter() {
     setBaseCurrency(targetCurrency);
     setTargetCurrency(temp);
   };
-  
 
   const fetchCurrencies = async () => {
     try {
       const response = await fetch(`https://v6.exchangerate-api.com/v6/${API_KEY}/latest/USD`);
       const data = await response.json();
       const currencyKeys = Object.keys(data.conversion_rates);
-      if (!currencyKeys.includes(data.base_code)) {
-        currencyKeys.push(data.base_code);
-      }
       setCurrencies(currencyKeys.sort());
     } catch (error) {
       console.error('Error fetching currencies:', error);
@@ -249,22 +244,13 @@ export default function CurrencyConverter() {
       return;
     }
     try {
-      setLoading(true);
       const response = await fetch(`https://v6.exchangerate-api.com/v6/${API_KEY}/latest/${baseCurrency}`);
       const data = await response.json();
       const rate = data.conversion_rates[targetCurrency];
-      if (!rate) {
-        setResult(null);
-        setLoading(false);
-        return;
-      }
       const convertedAmount = inputAmount * rate;
       setResult(Number(convertedAmount.toFixed(2)).toLocaleString());
-
-      setLoading(false);
     } catch (error) {
       console.error('Error converting currency:', error);
-      setLoading(false);
     }
   };
 
@@ -277,50 +263,59 @@ export default function CurrencyConverter() {
     }
   }, [amount, baseCurrency, targetCurrency]);
 
-
   return (
-    <LinearGradient
-    colors={['#1a1a2e', '#3f0d40', '#000000']}
-    start={{ x: 0, y: 0 }}
-    end={{ x: 1.22, y: 1 }}
-    style={styles.container}
-  > 
-      <Text style={{ color:'white', fontWeight: 'bold' }}>From:</Text>
-      <CurrencyPicker 
-        selectedValue={baseCurrency}
-        onValueChange={setBaseCurrency}
-        currencies={currencies}
-        currenciesData={currenciesData}
-      />
-      
-      <Text style={{ color:'white', fontWeight: 'bold' }}>To:</Text>
-      <CurrencyPicker 
-        selectedValue={targetCurrency}
-        onValueChange={setTargetCurrency}
-        currencies={currencies}
-        currenciesData={currenciesData}
-      />
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <LinearGradient
+          colors={['#1a1a2e', '#3f0d40', '#000000']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1.22, y: 1 }}
+          style={styles.container}
+        >
+          <ScrollView keyboardShouldPersistTaps="handled">
+            <Text style={styles.label}>From:</Text>
+            <CurrencyPicker
+              selectedValue={baseCurrency}
+              onValueChange={setBaseCurrency}
+              currencies={currencies}
+              currenciesData={currenciesData}
+            />
 
-      <Text style={{ color:'white', fontWeight: 'bold'}}>Amount:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter amount"
-        placeholderTextColor="gray"
-        value={amount}
-        onChangeText={setAmount}
-        keyboardType="numeric"
-      />
-       <TouchableOpacity onPress={reverseCurrencies} style={styles.reverseButton}>
-        <Text style={styles.reverseText}>⇄ Reverse</Text>
-      </TouchableOpacity>
-    
+            <Text style={styles.label}>To:</Text>
+            <CurrencyPicker
+              selectedValue={targetCurrency}
+              onValueChange={setTargetCurrency}
+              currencies={currencies}
+              currenciesData={currenciesData}
+            />
 
-      {result && (
-        <Text style={styles.result}>
-          {amount} {baseCurrency} = {result} {targetCurrency}
-        </Text>
-      )}
-    </LinearGradient>
+            <Text style={styles.label}>Amount:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter amount"
+              placeholderTextColor="gray"
+              value={amount}
+              onChangeText={setAmount}
+              keyboardType="numeric"
+              returnKeyType="done"
+            />
+
+            <TouchableOpacity onPress={reverseCurrencies} style={styles.reverseButton}>
+              <Text style={styles.reverseText}>⇄ Reverse</Text>
+            </TouchableOpacity>
+
+            {result && (
+              <Text style={styles.result}>
+                {amount} {baseCurrency} = {result} {targetCurrency}
+              </Text>
+            )}
+          </ScrollView>
+        </LinearGradient>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -328,9 +323,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    paddingTop: 80,
     justifyContent: 'center',
-    backgroundColor: '#e4ebe5'
-    
+  },
+  label: {
+    color: 'white',
+    fontWeight: 'bold',
   },
   input: {
     height: 40,
@@ -338,13 +336,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginVertical: 10,
     paddingHorizontal: 10,
-    color:'white'
+    color: 'white'
   },
   result: {
     marginTop: 20,
     fontSize: 25,
     fontWeight: 'bold',
-    color:'white'
+    color: 'white'
   },
   pickerButton: {
     borderWidth: 1,
@@ -357,7 +355,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pickerText: {
-    color:'white', // white text for selected currency display
+    color: 'white',
   },
   flagImage: {
     width: 30,
@@ -376,7 +374,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 10,
-    color:'black'
+    color: 'black'
   },
   modalItem: {
     flexDirection: 'row',
@@ -388,7 +386,7 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: 16,
     marginLeft: 10,
-    color:'black' // white text for currency names in the modal
+    color: 'black'
   },
   currencyCode: {
     fontWeight: 'bold',
@@ -406,5 +404,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'left',
   },
-  
 });
