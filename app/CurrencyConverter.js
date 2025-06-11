@@ -270,7 +270,8 @@ export default function CurrencyConverter() {
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <LinearGradient
-          colors={['#1a1a2e', '#3f0d40', '#000000']}
+  
+           colors={['#edcda6', '#edcda6', '#edcda6']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1.22, y: 1 }}
           style={styles.container}

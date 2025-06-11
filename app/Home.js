@@ -13,7 +13,9 @@ export default function Home() {
   const [currentDay, setCurrentDay] = useState(1);
 
   const totalBalance = parseFloat(money) || 0;
-  const dailyBudget = totalBalance && totalPlannedDays ? (totalBalance / totalPlannedDays).toFixed(2) : '0.00';
+  const dailyBudget = totalBalance && totalPlannedDays
+    ? (totalBalance / totalPlannedDays).toFixed(2)
+    : '0.00';
 
   const handleNewDay = () => {
     if (currentDay < totalPlannedDays) {
@@ -22,24 +24,12 @@ export default function Home() {
   };
 
   return (
-    <LinearGradient
-      colors={['#1a1a2e', '#3f0d40', '#000000']}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 3, y: 2 }}
-      style={styles.container}
-    >
-      <LinearGradient
-        colors={['#2d1b3c', '#51294c', '#100c1d']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.balanceContainer}
-      >
+    <View style={styles.container}>
+      <View style={styles.balanceContainer}>
         <Text style={styles.balanceLabel}>Balance</Text>
         <Text style={styles.balanceValue}>${money || '0.00'}</Text>
-        <Text style={styles.dailyBudgetLabel}>
-          Daily Budget: ${dailyBudget}
-        </Text>
-      </LinearGradient>
+        <Text style={styles.dailyBudgetLabel}>Daily Budget: ${dailyBudget}</Text>
+      </View>
 
       <View style={styles.topRow}>
         <Text style={styles.countryText}>Country: {country || 'N/A'}</Text>
@@ -71,57 +61,33 @@ export default function Home() {
 
         <LinearGradient
           colors={['#3b1f3e', '#5b2a60', '#241629']}
-          start={{ x:0, y: 0.24 }}
+          start={{ x: 0, y: 0.24 }}
           end={{ x: 0, y: -0.13 }}
           style={styles.rightSide}
         >
           <Text style={styles.historyTitle}>History</Text>
           <ScrollView style={styles.historyScroll}>
             {Array.from({ length: 12 }, (_, i) => (
-              <Text key={i} style={styles.historyItem}>Day {i + 1}: Spent ${Math.floor(Math.random() * 40 + 10)}</Text>
+              <Text key={i} style={styles.historyItem}>
+                Day {i + 1}: Spent ${Math.floor(Math.random() * 40 + 10)}
+              </Text>
             ))}
           </ScrollView>
         </LinearGradient>
       </View>
-    </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#edcda6', //ändra bakgrund på hem
     padding: 20,
     paddingTop: 40,
   },
-  topRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  countryText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  newButton: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 5,
-  },
-  newButtonText: {
-    color: '#3e1e68',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  dayText: {
-    fontSize: 16,
-    marginVertical: 10,
-    fontWeight: 'bold',
-    color: 'white',
-  },
   balanceContainer: {
+    backgroundColor: '#68181f',
     padding: 25,
     borderRadius: 20,
     alignItems: 'flex-start',
@@ -144,6 +110,34 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontStyle: 'italic',
     color: 'white',
+  },
+  topRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  countryText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  newButton: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+  },
+  newButtonText: {
+    color: '#3e1e68',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  dayText: {
+    fontSize: 16,
+    marginVertical: 10,
+    fontWeight: 'bold',
+    color: '#000',
   },
   mainContent: {
     flex: 1,
@@ -185,5 +179,16 @@ const styles = StyleSheet.create({
   historyItem: {
     marginBottom: 5,
     color: 'white',
+  },
+  footer: {
+    backgroundColor: '#3D0A05',
+    paddingVertical: 10,
+    alignItems: 'center',
+    marginTop: 10,
+    borderRadius: 10,
+  },
+  footerText: {
+    color: '#efdbbf',
+    fontSize: 14,
   },
 });

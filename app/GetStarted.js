@@ -18,7 +18,7 @@ const GetStarted = () => {
 
   return (
     <LinearGradient
-      colors={['#1a1a2e', '#3f0d40', '#000000']}
+      colors={['#68181f', '#68181f', '#68181f']}
       start={{ x: 0, y: 0 }}
       end={{ x: 1.22, y: 1 }}
       style={styles.container}
