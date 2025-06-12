@@ -4,8 +4,8 @@
     "slug": "Remicy",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "remicy",
+    "icon": "./assets/logo.png",
+    "scheme": "Remicy - comfortable travel means fun - Stella Huynh ",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -13,7 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#3D0A05"
       },
       "edgeToEdgeEnabled": true
     },

@@ -49,7 +49,8 @@ export default function Home() {
           {Array.from({ length: currentDay }, (_, index) => (
             <LinearGradient
               key={index}
-              colors={['#2c2c54', '#434371', '#1b1b3a']}
+              //day block
+              colors={['#3D0A05', '#68181f', '#3D0A05']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.dayBox}
@@ -60,7 +61,8 @@ export default function Home() {
         </ScrollView>
 
         <LinearGradient
-          colors={['#3b1f3e', '#5b2a60', '#241629']}
+        //History block
+          colors={['#68181f', '#68181f', '#68181f']}
           start={{ x: 0, y: 0.24 }}
           end={{ x: 0, y: -0.13 }}
           style={styles.rightSide}
@@ -86,6 +88,7 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 40,
   },
+  //balance containern
   balanceContainer: {
     backgroundColor: '#68181f',
     padding: 25,
@@ -123,13 +126,13 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   newButton: {
-    backgroundColor: '#fff',
+    backgroundColor: '#68181f',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 5,
   },
   newButtonText: {
-    color: '#3e1e68',
+    color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
   },

@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   label: {
-    color: 'white',
+    color: '3D0A05',
     fontWeight: 'bold',
   },
   input: {
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pickerText: {
-    color: 'white',
+    color: '3D0A05',
   },
   flagImage: {
     width: 30,
@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: 'lightgray',
+    borderBottomColor: '3D0A05',
   },
   modalText: {
     fontSize: 16,
@@ -395,13 +395,13 @@ const styles = StyleSheet.create({
   },
   reverseButton: {
     marginVertical: 10,
-    backgroundColor: '#443a47',
+    backgroundColor: '#68181f',
     padding: 10,
     borderRadius: 5,
     width: '25%'
   },
   reverseText: {
-    color: 'white',
+    color: '#edcda6',
     fontWeight: 'bold',
     textAlign: 'left',
   },
