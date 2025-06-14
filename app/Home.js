@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
   Alert,
   Image,
@@ -29,6 +29,12 @@ export default function Home() {
   // totalBalance är dynamisk, originalMoney konstant
   const [totalBalance, setTotalBalance] = useState(originalMoney);
 
+  // Uppdatera totalBalance varje gång money ändras i kontexten
+  useEffect(() => {
+    const newMoney = parseFloat(money) || 0;
+    setTotalBalance(newMoney);
+  }, [money]);
+
   // dailyBudget konstant
   const dailyBudget = totalPlannedDays ? originalMoney / totalPlannedDays : 0;
 
@@ -49,11 +55,11 @@ export default function Home() {
   const ratio = remainingBudget / dailyBudget;
   let emojiSource = emoji1;
 
-  if (dailyBudget === 0 || ratio <= 0) {
+  if (dailyBudget === 0.25 || ratio <= 0.25) {
     emojiSource = emoji4;
-  } else if (ratio <= 0.5) {
-    emojiSource = emoji3;
   } else if (ratio <= 0.75) {
+    emojiSource = emoji3;
+  } else if (ratio <= 0.5) {
     emojiSource = emoji1;
   } else {
     emojiSource = emoji1;
@@ -211,8 +217,8 @@ export default function Home() {
   );
 }
 
+// Behåll dina styles som de är i din kod
 const styles = StyleSheet.create({
-  // samma styles som tidigare, inga ändringar behövs här
   container: {
     flex: 1,
     backgroundColor: '#edcda6',
