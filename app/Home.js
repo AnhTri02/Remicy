@@ -1,13 +1,23 @@
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useContext, useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useContext, useEffect, useRef, useState } from 'react';
+import {
+  Alert,
+  Image,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { TravelPlanContext } from './TravelPlanContext';
 
-const emoji1 = require('./assets/emoji.png');
-const emoji2 = require('./assets/emoji2.png');
-const emoji3 = require('./assets/emoji3.png');
-const emoji4 = require('./assets/emoji4.png');
+const emoji1 = require('../assets/emoji.png');
+const emoji2 = require('../assets/emoji2.png');
+const emoji3 = require('../assets/emoji3.png');
+const emoji4 = require('../assets/emoji4.png');
 
 export default function Home() {
   const navigation = useNavigation();
@@ -19,43 +29,118 @@ export default function Home() {
 
   const totalBalance = parseFloat(money) || 0;
   const originalDailyBudget = totalPlannedDays ? totalBalance / totalPlannedDays : 0;
-  const dailyBudget = originalDailyBudget.toFixed(2);
+
+  const [expensesByDay, setExpensesByDay] = useState({});
+  const [expenseInput, setExpenseInput] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedDay, setSelectedDay] = useState(null);
+
+  const expensesForCurrentDay = expensesByDay[currentDay] || [];
+  const totalSpentCurrentDay = expensesForCurrentDay.reduce((acc, val) => acc + val, 0);
+  const remainingBudget = originalDailyBudget - totalSpentCurrentDay;
+
+  let emojiSource = emoji1;
+  const ratio = remainingBudget / originalDailyBudget;
+
+  if (originalDailyBudget === 0 || ratio <= 0) {
+    emojiSource = emoji4;
+  } else if (ratio <= 0.25) {
+    emojiSource = emoji3;
+  } else if (ratio <= 0.5) {
+    emojiSource = emoji2;
+  } else if (ratio <= 0.75) {
+    emojiSource = emoji1;
+  } else {
+    emojiSource = emoji1;
+  }
+
+  const handleAddExpense = () => {
+    const expense = parseFloat(expenseInput);
+
+    if (isNaN(expense) || expense <= 0) {
+      Alert.alert('Fel', 'Ange ett giltigt belopp större än 0');
+      return;
+    }
+
+    if (expense > remainingBudget) {
+      Alert.alert('Fel', 'Du har inte tillräckligt med budget kvar för denna utgift');
+      return;
+    }
+
+    setExpensesByDay((prev) => {
+      const prevExpenses = prev[currentDay] || [];
+      return { ...prev, [currentDay]: [...prevExpenses, expense] };
+    });
+
+    setExpenseInput('');
+  };
 
   const handleNewDay = () => {
     if (currentDay < totalPlannedDays) {
       setCurrentDay(currentDay + 1);
+      setExpenseInput('');
     }
   };
 
-    // Determine emoji image path
-  let emojiSource;
-  if (originalDailyBudget === 0) {
-    emojiSource = require('./assets/emoji4.png');
-  } else {
-    const ratio = dailyBudget / originalDailyBudget;
-    if (ratio <= 0) {
-      emojiSource = require('./assets/emoji4.png');
-    } else if (ratio <= 0.25) {
-      emojiSource = require('./assets/emoji3.png');
-    } else if (ratio <= 0.5) {
-      emojiSource = require('./assets/emoji2.png');
-    } else if (ratio <= 0.75) {
-      emojiSource = require('./assets/emoji.png');
-    }
-  }
+  const openDayModal = (day) => {
+    setSelectedDay(day);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setSelectedDay(null);
+  };
+
+  const timerRef = useRef(null);
+  const intervalRef = useRef(null);
+
+  useEffect(() => {
+    const goToNextDay = () => {
+      setCurrentDay((prevDay) => {
+        if (prevDay < totalPlannedDays) {
+          return prevDay + 1;
+        } else {
+          if (intervalRef.current) clearInterval(intervalRef.current);
+          return prevDay;
+        }
+      });
+    };
+
+    const now = new Date();
+    const nextMidnight = new Date();
+    nextMidnight.setHours(24, 0, 0, 0);
+
+    const msUntilMidnight = nextMidnight.getTime() - now.getTime();
+
+    timerRef.current = setTimeout(() => {
+      goToNextDay();
+
+      intervalRef.current = setInterval(() => {
+        goToNextDay();
+      }, 24 * 60 * 60 * 1000);
+    }, msUntilMidnight);
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [totalPlannedDays]);
 
   return (
     <View style={styles.container}>
       <View style={styles.balanceContainer}>
         <Text style={styles.balanceLabel}>Balance</Text>
         <Text style={styles.balanceValue}>${money || '0.00'}</Text>
-        <Text style={styles.dailyBudgetLabel}>Daily Budget: ${dailyBudget}</Text>
+        <Text style={styles.dailyBudgetLabel}>
+          Daily Budget: ${originalDailyBudget.toFixed(2)}
+        </Text>
+        <Text style={styles.dailyBudgetLabel}>
+          Remaining Budget: ${remainingBudget.toFixed(2)}
+        </Text>
 
         <View style={styles.emojiGrid}>
-          <Image source={emoji1} style={styles.emojiLarge} />
-          <Image source={emoji2} style={styles.emojiLarge} />
-          <Image source={emoji3} style={styles.emojiLarge} />
-          <Image source={emoji4} style={styles.emojiLarge} />
+          <Image source={emojiSource} style={styles.emojiSmall} />
         </View>
       </View>
 
@@ -72,19 +157,36 @@ export default function Home() {
         Day {currentDay}/{totalPlannedDays}
       </Text>
 
+      <View style={styles.expenseInputContainer}>
+        <TextInput
+          style={styles.expenseInput}
+          placeholder="Enter expense"
+          keyboardType="numeric"
+          value={expenseInput}
+          onChangeText={setExpenseInput}
+        />
+        <TouchableOpacity style={styles.addButton} onPress={handleAddExpense}>
+          <Text style={styles.addButtonText}>Add Expense</Text>
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.mainContent}>
         <ScrollView style={styles.leftSide} contentContainerStyle={styles.leftSideScroll}>
-          {Array.from({ length: currentDay }, (_, index) => (
-            <LinearGradient
-              key={index}
-              colors={['#3D0A05', '#68181f', '#3D0A05']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.dayBox}
-            >
-              <Text style={styles.dayBoxText}>Day {index + 1}</Text>
-            </LinearGradient>
-          ))}
+          {Array.from({ length: totalPlannedDays }, (_, index) => {
+            const day = index + 1;
+            return (
+              <TouchableOpacity
+                key={day}
+                style={[
+                  styles.dayBox,
+                  day === currentDay && { borderColor: '#ffdd00', borderWidth: 2 },
+                ]}
+                onPress={() => openDayModal(day)}
+              >
+                <Text style={styles.dayBoxText}>Day {day}</Text>
+              </TouchableOpacity>
+            );
+          })}
         </ScrollView>
 
         <LinearGradient
@@ -95,14 +197,42 @@ export default function Home() {
         >
           <Text style={styles.historyTitle}>History</Text>
           <ScrollView style={styles.historyScroll}>
-            {Array.from({ length: 12 }, (_, i) => (
-              <Text key={i} style={styles.historyItem}>
-                Day {i + 1}: Spent ${Math.floor(Math.random() * 40 + 10)}
-              </Text>
-            ))}
+            {Array.from({ length: totalPlannedDays }, (_, i) => {
+              const day = i + 1;
+              const expenses = expensesByDay[day] || [];
+              const totalSpent = expenses.reduce((sum, val) => sum + val, 0).toFixed(2);
+              return (
+                <Text key={day} style={styles.historyItem}>
+                  Day {day}: Spent ${totalSpent}
+                </Text>
+              );
+            })}
           </ScrollView>
         </LinearGradient>
       </View>
+
+      <Modal visible={modalVisible} animationType="slide" transparent={true}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Expenses for Day {selectedDay}</Text>
+            <ScrollView style={styles.modalScroll}>
+              {(expensesByDay[selectedDay] || []).length === 0 ? (
+                <Text style={styles.modalText}>No expenses recorded.</Text>
+              ) : (
+                (expensesByDay[selectedDay] || []).map((expense, idx) => (
+                  <Text key={idx} style={styles.modalText}>
+                    - ${expense.toFixed(2)}
+                  </Text>
+                ))
+              )}
+            </ScrollView>
+
+            <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -133,16 +263,14 @@ const styles = StyleSheet.create({
   },
   emojiGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'center',
     marginTop: 10,
   },
-  emojiLarge: {
-    width: 189,
-    height: 189,
+  emojiSmall: {
+    width: 40,
+    height: 40,
     margin: 6,
   },
-
   topRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -158,6 +286,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#68181f',
     paddingHorizontal: 12,
     paddingVertical: 8,
+   
     borderRadius: 6,
   },
   newButtonText: {
@@ -168,6 +297,33 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     marginVertical: 8,
+  },
+  expenseInputContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    marginBottom: 12,
+    alignItems: 'center',
+  },
+  expenseInput: {
+    flex: 1,
+    borderColor: '#68181f',
+    borderWidth: 1,
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    fontSize: 16,
+    marginRight: 10,
+  },
+  addButton: {
+    backgroundColor: '#68181f',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 6,
+  },
+  addButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   mainContent: {
     flex: 1,
@@ -187,26 +343,64 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#3D0A05',
   },
   dayBoxText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: '#ffdd00',
+    fontWeight: '600',
   },
   rightSide: {
-    width: 140,
+    flex: 2,
     padding: 12,
   },
   historyTitle: {
+    fontSize: 18,
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 16,
     marginBottom: 8,
   },
   historyScroll: {
-    maxHeight: 280,
+    maxHeight: '100%',
   },
   historyItem: {
     color: 'white',
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.75)',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    maxHeight: '80%',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  modalScroll: {
+    marginBottom: 16,
+  },
+  modalText: {
+    fontSize: 16,
     marginBottom: 6,
+  },
+  closeButton: {
+    alignSelf: 'center',
+    backgroundColor: '#68181f',
+    borderRadius: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+  },
+  closeButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
