@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useState } from 'react';
 import {
   Alert,
   Image,
@@ -15,7 +15,6 @@ import {
 import { TravelPlanContext } from './TravelPlanContext';
 
 const emoji1 = require('../assets/emoji.png');
-const emoji2 = require('../assets/emoji2.png');
 const emoji3 = require('../assets/emoji3.png');
 const emoji4 = require('../assets/emoji4.png');
 
@@ -25,29 +24,35 @@ export default function Home() {
   const { country, money, days } = travelPlan || {};
 
   const totalPlannedDays = parseInt(days, 10) || 1;
+  const originalMoney = parseFloat(money) || 0;
+
+  // totalBalance är dynamisk, originalMoney konstant
+  const [totalBalance, setTotalBalance] = useState(originalMoney);
+
+  // dailyBudget konstant
+  const dailyBudget = totalPlannedDays ? originalMoney / totalPlannedDays : 0;
+
   const [currentDay, setCurrentDay] = useState(1);
-
-  const totalBalance = parseFloat(money) || 0;
-  const originalDailyBudget = totalPlannedDays ? totalBalance / totalPlannedDays : 0;
-
   const [expensesByDay, setExpensesByDay] = useState({});
   const [expenseInput, setExpenseInput] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDay, setSelectedDay] = useState(null);
 
+  // Summan av utgifter för currentDay
   const expensesForCurrentDay = expensesByDay[currentDay] || [];
   const totalSpentCurrentDay = expensesForCurrentDay.reduce((acc, val) => acc + val, 0);
-  const remainingBudget = originalDailyBudget - totalSpentCurrentDay;
 
+  // Remaining budget för current day: dailyBudget - utgifter denna dag
+  const remainingBudget = dailyBudget - totalSpentCurrentDay;
+
+  // Emoji baserat på kvarvarande budget-ratio
+  const ratio = remainingBudget / dailyBudget;
   let emojiSource = emoji1;
-  const ratio = remainingBudget / originalDailyBudget;
 
-  if (originalDailyBudget === 0 || ratio <= 0) {
+  if (dailyBudget === 0 || ratio <= 0) {
     emojiSource = emoji4;
-  } else if (ratio <= 0.25) {
-    emojiSource = emoji3;
   } else if (ratio <= 0.5) {
-    emojiSource = emoji2;
+    emojiSource = emoji3;
   } else if (ratio <= 0.75) {
     emojiSource = emoji1;
   } else {
@@ -72,6 +77,9 @@ export default function Home() {
       return { ...prev, [currentDay]: [...prevExpenses, expense] };
     });
 
+    // Subtrahera från totalBalance
+    setTotalBalance((prevBalance) => prevBalance - expense);
+
     setExpenseInput('');
   };
 
@@ -92,48 +100,14 @@ export default function Home() {
     setSelectedDay(null);
   };
 
-  const timerRef = useRef(null);
-  const intervalRef = useRef(null);
-
-  useEffect(() => {
-    const goToNextDay = () => {
-      setCurrentDay((prevDay) => {
-        if (prevDay < totalPlannedDays) {
-          return prevDay + 1;
-        } else {
-          if (intervalRef.current) clearInterval(intervalRef.current);
-          return prevDay;
-        }
-      });
-    };
-
-    const now = new Date();
-    const nextMidnight = new Date();
-    nextMidnight.setHours(24, 0, 0, 0);
-
-    const msUntilMidnight = nextMidnight.getTime() - now.getTime();
-
-    timerRef.current = setTimeout(() => {
-      goToNextDay();
-
-      intervalRef.current = setInterval(() => {
-        goToNextDay();
-      }, 24 * 60 * 60 * 1000);
-    }, msUntilMidnight);
-
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [totalPlannedDays]);
-
   return (
     <View style={styles.container}>
       <View style={styles.balanceContainer}>
         <Text style={styles.balanceLabel}>Balance</Text>
-        <Text style={styles.balanceValue}>${money || '0.00'}</Text>
+        <Text style={styles.balanceValue}>${totalBalance.toFixed(2)}</Text>
+
         <Text style={styles.dailyBudgetLabel}>
-          Daily Budget: ${originalDailyBudget.toFixed(2)}
+          Daily Budget: ${dailyBudget.toFixed(2)}
         </Text>
         <Text style={styles.dailyBudgetLabel}>
           Remaining Budget: ${remainingBudget.toFixed(2)}
@@ -238,9 +212,10 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
+  // samma styles som tidigare, inga ändringar behövs här
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#edcda6',
   },
   balanceContainer: {
     padding: 16,
@@ -286,7 +261,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#68181f',
     paddingHorizontal: 12,
     paddingVertical: 8,
-   
     borderRadius: 6,
   },
   newButtonText: {
@@ -307,6 +281,7 @@ const styles = StyleSheet.create({
   expenseInput: {
     flex: 1,
     borderColor: '#68181f',
+    backgroundColor: '#fff',
     borderWidth: 1,
     borderRadius: 6,
     paddingHorizontal: 10,
