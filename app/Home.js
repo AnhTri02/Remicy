@@ -57,9 +57,9 @@ export default function Home() {
 
   if (dailyBudget === 0.25 || ratio <= 0.25) {
     emojiSource = emoji4;
-  } else if (ratio <= 0.75) {
-    emojiSource = emoji3;
   } else if (ratio <= 0.5) {
+    emojiSource = emoji3;
+  } else if (ratio <= 0.75) {
     emojiSource = emoji1;
   } else {
     emojiSource = emoji1;
