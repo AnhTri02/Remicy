@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   rightSide: {
-    flex: 2,
+    flex: 1,
     padding: 12,
   },
   historyTitle: {
